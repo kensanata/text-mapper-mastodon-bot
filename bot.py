@@ -47,22 +47,14 @@ def login(account, scopes = ['read', 'write']):
         api_base_url = url)
 
     return mastodon
-
-def get_image(url):
-    # opener = urllib.request.FancyURLopener({})
-    # url = "https://campaignwiki.org/text-mapper/alpine/random"
-    # f = opener.open(url)
-    # return f.read()
-    return cairosvg.svg2png(url=url)
     
 def main():
     if len(sys.argv) == 1:
         print("Error: you must provide an account", file=sys.stderr)
         sys.exit(1)
     mastodon = login(sys.argv[1])
-    url = "https://campaignwiki.org/text-mapper/alpine/random"
     text = "#textmapper #hex #map #rpg"
-    png = get_image(url)
+    png = cairosvg.svg2png(url="https://campaignwiki.org/text-mapper/alpine/random")
     media = mastodon.media_post(png, mime_type="image/png", description="a hex map")
     mastodon.status_post(text, media_ids=[media.id])
 
