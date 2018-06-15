@@ -1,5 +1,12 @@
 # How to adapt this bot for your use
 
+The prerequisites:
+
+```
+pip3 install Mastodon.py
+pip3 install cairosvg
+```
+
 ## First, create a bot account and set everything up
 
 Create a [Mastodon Bot](https://tinysubversions.com/notes/mastodon-bot/).
@@ -38,3 +45,11 @@ mastodon.status_post(text, media_ids=[media.id])
 ```
 
 If you want to change anything, it's probably going to be here.
+
+## Finally, invoke it
+
+This is what I do:
+
+```
+./bots.py textmapper@botsin.space
+```

@@ -18,6 +18,7 @@ import sys
 import os.path
 import urllib.request
 import cairosvg
+import re
 
 def login(account, scopes = ['read', 'write']):
     """
@@ -53,10 +54,25 @@ def main():
         print("Error: you must provide an account", file=sys.stderr)
         sys.exit(1)
     mastodon = login(sys.argv[1])
+    url = "https://campaignwiki.org/text-mapper/alpine/random"
     text = "#textmapper #hex #map #rpg"
-    png = cairosvg.svg2png(url="https://campaignwiki.org/text-mapper/alpine/random")
+    # download SVG
+    opener = urllib.request.FancyURLopener({})
+    url = "https://campaignwiki.org/text-mapper/alpine/random"
+    f = opener.open(url)
+    svg = f.read()
+    # extract seed and prepend it to the status text
+    match = re.search("# Seed: (\d+)", svg.decode("utf-8"))
+    if match:
+        seed = match.group(1)
+        text = url + "?seed=" + seed + " " + text
+    # convert SVG to PNG
+    png = cairosvg.svg2png(url=url)
+    # upload image
     media = mastodon.media_post(png, mime_type="image/png", description="a hex map")
-    mastodon.status_post(text, media_ids=[media.id])
+    # post status
+    print(text)
+    # mastodon.status_post(text, media_ids=[media.id])
 
 if __name__ == "__main__":
     main()
