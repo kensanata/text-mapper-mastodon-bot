@@ -71,8 +71,7 @@ def main():
     # upload image
     media = mastodon.media_post(png, mime_type="image/png", description="a hex map")
     # post status
-    print(text)
-    # mastodon.status_post(text, media_ids=[media.id])
+    mastodon.status_post(text, media_ids=[media.id])
 
 if __name__ == "__main__":
     main()
