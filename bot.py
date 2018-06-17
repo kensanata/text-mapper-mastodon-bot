@@ -18,6 +18,8 @@ import sys
 import os.path
 import urllib.request
 import cairosvg
+import getopt
+import os
 import re
 
 def login(account, scopes = ['read', 'write']):
@@ -49,23 +51,28 @@ def login(account, scopes = ['read', 'write']):
 
     return mastodon
     
-def main():
-    if len(sys.argv) == 1:
-        print("Error: you must provide an account", file=sys.stderr)
-        sys.exit(1)
-    mastodon = login(sys.argv[1])
+def main(account, debug=False):
+    mastodon = login(account)
     url = "https://campaignwiki.org/text-mapper/alpine/random"
     text = "#textmapper #hex #map #rpg"
     # download SVG
     opener = urllib.request.FancyURLopener({})
-    url = "https://campaignwiki.org/text-mapper/alpine/random"
     f = opener.open(url)
     svg = f.read()
     # extract seed and prepend it to the status text
     match = re.search("# Seed: (\d+)", svg.decode("utf-8"))
     if match:
         seed = match.group(1)
-        text = url + "?seed=" + seed + " " + text
+        text = ("SVG map: " + url
+                + "?seed=" + seed + " "
+                + "Description: "
+                + "https://campaignwiki.org/hex-describe/describe/random/alpine"
+                + "?seed=" + seed + " "
+                + text)
+    # abort now if debugging
+    if debug:
+        print(text)
+        sys.exit(0)
     # convert SVG to PNG
     png = cairosvg.svg2png(url=url)
     # upload image
@@ -73,5 +80,14 @@ def main():
     # post status
     mastodon.status_post(text, media_ids=[media.id])
 
+def usage():
+    print("Please provide an account name like nick@example.org")
+    print("Use --debug to print the status instead of posting it")
+    print("Use --help to print this message")
+
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) != 2:
+        print("Error: you must provide an account", file=sys.stderr)
+        sys.exit(1)
+    account = sys.argv[1]
+    main(account, os.getenv("DEBUG", default=False))
