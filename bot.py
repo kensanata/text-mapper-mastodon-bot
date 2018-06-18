@@ -54,7 +54,7 @@ def login(account, scopes = ['read', 'write']):
 def main(account, debug=False):
     mastodon = login(account)
     url = "https://campaignwiki.org/text-mapper/alpine/random"
-    text = "#textmapper #hex #map #rpg"
+    tags = "#textmapper #hex #map #rpg"
     # download SVG
     opener = urllib.request.FancyURLopener({})
     f = opener.open(url)
@@ -63,12 +63,21 @@ def main(account, debug=False):
     match = re.search("# Seed: (\d+)", svg.decode("utf-8"))
     if match:
         seed = match.group(1)
+        f = opener.open("https://campaignwiki.org/names/text")
+        names = f.read().decode("utf-8").replace("\n", " ")
+        # max length is 500, each URL counts as 23:
+        # 500-9+23+14+23+24+27=380
+        while len(names) > 380 and names.find(" ") >= 0:
+            names = re.sub("^\S+ ", "", names)
         text = ("SVG map: " + url
                 + "?seed=" + seed + " "
                 + "Description: "
                 + "https://campaignwiki.org/hex-describe/describe/random/alpine"
                 + "?seed=" + seed + " "
-                + text)
+                + "And some random names: " + names + " "
+                + tags)
+    else:
+        text = tags
     # abort now if debugging
     if debug:
         print(text)
