@@ -17,7 +17,9 @@ from mastodon import Mastodon
 import sys
 import os.path
 import urllib.request
+import urllib.parse
 import cairosvg
+import random
 import getopt
 import os
 import re
@@ -53,37 +55,41 @@ def login(account, scopes = ['read', 'write']):
     
 def main(account, debug=False):
     mastodon = login(account)
-    url = "https://campaignwiki.org/text-mapper/alpine/random"
-    tags = "#textmapper #hex #map #rpg"
+    seed = random.randint(0, 2**32)
+    svg_url = "https://campaignwiki.org/text-mapper/alpine/random?"
+    text_url = "https://campaignwiki.org/text-mapper/alpine/random/text?"
+    desc_url = "https://campaignwiki.org/hex-describe/describe/random/alpine?"
+    args = ["seed=%d" % seed];
+    if random.random() > 0.6:
+        args.append("bottom=%d" % random.randint(1,6))
+    if random.random() > 0.6:
+        args.append("peak=%d" % random.randint(7,9))
+    if random.random() > 0.6:
+        args.append("steepness=%.1f" % (random.randint(0,50)/10))
+    svg_url += "&".join(args)
+    text_url += "&".join(args)
     # download SVG
     opener = urllib.request.FancyURLopener({})
-    f = opener.open(url)
+    f = opener.open(svg_url)
     svg = f.read()
-    # extract seed and prepend it to the status text
-    match = re.search("# Seed: (\d+)", svg.decode("utf-8"))
-    if match:
-        seed = match.group(1)
-        f = opener.open("https://campaignwiki.org/names/text")
-        names = f.read().decode("utf-8").replace("\n", " ")
-        # max length is 500, each URL counts as 23:
-        # 500-9+23+14+23+24+27=380
-        while len(names) > 380 and names.find(" ") >= 0:
-            names = re.sub("^\S+ ", "", names)
-        text = ("SVG map: " + url
-                + "?seed=" + seed + " "
-                + "Description: "
-                + "https://campaignwiki.org/hex-describe/describe/random/alpine"
-                + "?seed=" + seed + " "
-                + "And some random names: " + names + " "
-                + tags)
-    else:
-        text = tags
+    # convert SVG to PNG
+    png = cairosvg.svg2png(bytestring=svg)
+    # get some random names
+    f = opener.open("https://campaignwiki.org/names/text")
+    names = f.read().decode("utf-8").replace("\n", " ")
+    # max length is 500, each URL counts as 23:
+    # 500-9+23+14+23+24+27=380
+    while len(names) > 380 and names.find(" ") >= 0:
+        names = re.sub("^\S+ ", "", names)
+    # create the status text
+    text = ("SVG map: " + svg_url + " "
+            + "Description: " + desc_url + "url=" + urllib.parse.quote(text_url) + " "
+            + "And some random names: " + names + " "
+            + "#textmapper #hex #map #rpg")
     # abort now if debugging
     if debug:
         print(text)
         sys.exit(0)
-    # convert SVG to PNG
-    png = cairosvg.svg2png(url=url)
     # upload image
     media = mastodon.media_post(png, mime_type="image/png", description="a hex map")
     # post status
