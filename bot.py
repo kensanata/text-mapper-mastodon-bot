@@ -65,6 +65,8 @@ def main(account, debug=False):
     if random.random() > 0.6:
         args.append("peak=%d" % random.randint(7,9))
     if random.random() > 0.6:
+        args.append("peaks=%d" % random.randint(1,20))
+    if random.random() > 0.6:
         args.append("steepness=%.1f" % (random.randint(0,50)/10))
     svg_url += "&".join(args)
     text_url += "&".join(args)
