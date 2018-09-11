@@ -9,7 +9,10 @@ pip3 install cairosvg
 
 ## First, create a bot account and set everything up
 
-Create a [Mastodon Bot](https://tinysubversions.com/notes/mastodon-bot/).
+Mastodon provides a UI for all of this. Just go to your settings and
+under the "developer" menu there is a place to create a new app and
+get your credentials all in one go.
+
 You need to save the three codes you got as follows:
 
 The *Client ID* and *Client Secret* go into the first file, each on a
@@ -24,7 +27,7 @@ abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890
 ```
 
 The *Access Token* goes to a separate file called `<account>.user`,
-for example `textmapper@botsin.space.user`..
+for example `textmapper@botsin.space.user`.
 
 Example content:
 
