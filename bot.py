@@ -56,9 +56,9 @@ def login(account):
 def main(account, debug=False):
     mastodon = login(account)
     seed = random.randint(0, 2**32)
-    svg_url = "https://campaignwiki.org/text-mapper/alpine/random?"
-    text_url = "https://campaignwiki.org/text-mapper/alpine/random/text?"
-    desc_url = "https://campaignwiki.org/hex-describe/describe/random/alpine?"
+    app_url = "https://campaignwiki.org/text-mapper"
+    help_url = app_url + "/help"
+    svg_url = app_url + "/alpine/random"
     args = ["seed=%d" % seed];
     if random.random() > 0.6:
         args.append("bottom=%d" % random.randint(1,6))
@@ -68,26 +68,21 @@ def main(account, debug=False):
         args.append("peaks=%d" % random.randint(1,20))
     if random.random() > 0.8:
         args.append("steepness=%.1f" % (1 + random.randint(0,50)/10))
-    svg_url += "&".join(args)
-    text_url += "&".join(args)
+    svg_url += "?" + "&".join(args)
     # download SVG
-    opener = urllib.request.FancyURLopener({})
-    f = opener.open(svg_url)
-    svg = f.read()
+    svg = urllib.request.urlopen(svg_url).read()
     # convert SVG to PNG
     png = cairosvg.svg2png(bytestring=svg)
-    # get some random names
-    f = opener.open("https://campaignwiki.org/names/text")
-    names = f.read().decode("utf-8").replace("\n", " ")
-    # max length is 500, each URL counts as 23:
-    # 500-9+23+14+23+24+27=380
-    while len(names) > 380 and names.find(" ") >= 0:
-        names = re.sub("^\S+ ", "", names)
     # create the status text
-    text = ("SVG map: " + svg_url + " "
-            + "Description: " + desc_url + "url=" + urllib.parse.quote(text_url) + " "
-            + "And some random names: " + names + " "
-            + "#textmapper #hex #map #rpg")
+    text = ("An Alpine map for your next mini campaign!\n"
+            + "Download SVG:\n"
+            + svg_url + "\n"
+            + "(save as PDF using Inkscape, for example)\n"
+            + "Create your own maps with the web app:\n"
+            + app_url + "\n"
+            + "How to:\n"
+            + app_url + "\n"
+            + "#textmapper #hex #hexcrawl #map #rpg")
     # abort now if debugging
     if debug:
         print(text)
