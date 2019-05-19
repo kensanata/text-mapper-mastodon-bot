@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (C) 2018  Alex Schroeder <alex@gnu.org>
+# Copyright (C) 2018–2019  Alex Schroeder <alex@gnu.org>
 
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -52,7 +52,7 @@ def login(account, scopes = ['read', 'write']):
         api_base_url = url)
 
     return mastodon
-    
+
 def main(account, debug=False):
     mastodon = login(account)
     seed = random.randint(0, 2**32)
@@ -67,7 +67,7 @@ def main(account, debug=False):
     if random.random() > 0.8:
         args.append("peaks=%d" % random.randint(1,20))
     if random.random() > 0.8:
-        args.append("steepness=%.1f" % (random.randint(0,50)/10))
+        args.append("steepness=%.1f" % (1 + random.randint(0,50)/10))
     svg_url += "&".join(args)
     text_url += "&".join(args)
     # download SVG
