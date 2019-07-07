@@ -76,14 +76,11 @@ def main(account, debug=False):
     # convert SVG to PNG
     png = cairosvg.svg2png(bytestring=svg)
     # create the status text
-    text = ("An Alpine map for your next mini campaign!\n"
-            + "Download SVG:\n"
-            + svg_url + "\n"
+    text = ("An Alpine map for your next mini campaign! "
+            + "Download SVG: " + svg_url + "\n"
             + "(save as PDF using Inkscape, for example)\n"
-            + "Create your own maps with the web app:\n"
-            + app_url + "\n"
-            + "How to:\n"
-            + app_url + "\n"
+            + "Create your own maps with the web app:" + app_url + "\n"
+            + "How to: " + help_url + "\n"
             + "#textmapper #hex #hexcrawl #map #rpg")
     # abort now if debugging
     if debug:
