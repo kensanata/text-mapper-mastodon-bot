@@ -68,6 +68,8 @@ def main(account, debug=False):
         args.append("peaks=%d" % random.randint(1,20))
     if random.random() > 0.8:
         args.append("steepness=%.1f" % (1 + random.randint(0,50)/10))
+    if random.random() > 0.8:
+        args.append("arid=%.1f" % (random.randint(0,20)/10))
     if random.random() > 0.9:
         args.append("type=square")
     svg_url += "?" + "&".join(args)
