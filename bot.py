@@ -55,7 +55,9 @@ def login(account):
 def main(account, debug=False):
     mastodon = login(account)
     seed = random.randint(0, 2**32)
-    algorithm = random.choice(["alpine", "smale"])
+    algorithm = random.choice(["alpine", "smale",
+                               "alpine", "smale",
+                               "island"])
     app_url = "https://campaignwiki.org/text-mapper"
     help_url = app_url + "/help"
     svg_url = app_url + "/" + algorithm + "/random"
