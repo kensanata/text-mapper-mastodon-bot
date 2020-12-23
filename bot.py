@@ -79,7 +79,7 @@ def main(account, debug=False):
     # download SVG
     svg = urllib.request.urlopen(svg_url).read()
     # convert SVG to PNG
-    png = cairosvg.svg2png(bytestring=svg)
+    png = cairosvg.svg2png(bytestring=svg, dpi=90)
     # create the status text
     text = ("An " + algorithm.capitalize() + " map for your next mini campaign! "
             + "Download SVG: " + svg_url + "\n"
