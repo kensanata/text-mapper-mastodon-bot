@@ -79,7 +79,7 @@ def main(account, debug=False):
     # download SVG
     svg = urllib.request.urlopen(svg_url).read()
     # convert SVG to PNG
-    png = cairosvg.svg2png(bytestring=svg, dpi=90)
+    png = cairosvg.svg2png(bytestring=svg, scale=0.4)
     # create the status text
     text = ("An " + algorithm.capitalize() + " map for your next mini campaign! "
             + "Download SVG: " + svg_url + "\n"
@@ -90,6 +90,9 @@ def main(account, debug=False):
     # abort now if debugging
     if debug:
         print(text)
+        print("Saving the image as test.png.")
+        with open('test.png', 'wb') as file:
+            file.write(png)
         sys.exit(0)
     # upload image
     media = mastodon.media_post(png, mime_type="image/png", description="a hex map")
