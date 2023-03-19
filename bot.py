@@ -57,7 +57,6 @@ def main(account, debug=False):
     seed = random.randint(0, 2**32)
     algorithm = random.choice(["alpine", "smale",
                                "alpine", "smale",
-                               "alpine", "island",
                                "alpine", "apocalypse"])
     app_url = "https://campaignwiki.org/text-mapper"
     help_url = app_url + "/help"
